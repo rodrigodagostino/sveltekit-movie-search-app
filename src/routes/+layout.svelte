@@ -45,6 +45,7 @@
 
   .app-title {
     margin-bottom: 2rem;
+    text-align: center;
 
     a {
       display: inline-flex;
