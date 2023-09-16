@@ -1,11 +1,13 @@
-<script>
+<script lang="ts">
   import { IconPhoto, IconPlayerPlayFilled, IconShare3 } from '@tabler/icons-svelte';
 
   import Button from '$components/Button.svelte';
   import RatingRing from '$components/RatingRing.svelte';
+  import Modal from '$components/Modal.svelte';
 
   export let data;
 
+  let isModalVisible = false;
   $: title = data.title;
 </script>
 
@@ -37,17 +39,25 @@
           <p class="title__cast">{title.Actors}</p>
         </section>
         <footer class="title__footer">
-          <Button element="button" variant="primary-outline">
+          <Button
+            element="button"
+            variant="primary-outline"
+            on:click={() => (isModalVisible = true)}
+          >
             <IconPlayerPlayFilled size={22} />
             Watch trailer
           </Button>
-          <Button element="button" variant="secondary-text">
+          <Button element="button" variant="secondary-icon">
             <IconShare3 />
           </Button>
         </footer>
       </div>
     </div>
   {/if}
+
+  <Modal bind:isModalVisible title={`${title.Title} (${title.Year})`}>
+    <p>Modal Content</p>
+  </Modal>
 </div>
 
 <style lang="scss">
