@@ -7,8 +7,10 @@
 
   export let data;
 
-  let isModalVisible = false;
   $: title = data.title;
+  $: trailer = data.trailer;
+
+  let isModalVisible = false;
 </script>
 
 <div class="title">
@@ -55,9 +57,20 @@
     </div>
   {/if}
 
-  <Modal bind:isModalVisible title={`${title.Title} (${title.Year})`}>
-    <p>Modal Content</p>
-  </Modal>
+  {#if isModalVisible}
+    <Modal bind:isModalVisible title={`${title.Title} (${title.Year})`}>
+      <iframe
+        class="title__trailer"
+        width="560"
+        height="315"
+        src="https://www.youtube-nocookie.com/embed/{trailer.id.videoId}"
+        title="YouTube video player"
+        frameborder="0"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+    </Modal>
+  {/if}
 </div>
 
 <style lang="scss">
@@ -154,6 +167,13 @@
       justify-content: space-between;
       padding-top: 2rem;
       margin-top: auto;
+    }
+
+    &__trailer {
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 0.75rem;
     }
   }
 

@@ -10,7 +10,7 @@
 
   $: if (dialogRef && isModalVisible) dialogRef.showModal();
 
-  const closeModalOnBackdropClick = (event: MouseEvent) => {
+  const handleOnClick = (event: MouseEvent) => {
     const rect = dialogRef.getBoundingClientRect();
     const isInDialog =
       rect.top <= event.clientY &&
@@ -21,14 +21,11 @@
       dialogRef.close();
     }
   };
+
+  const handleOnClose = () => (isModalVisible = false);
 </script>
 
-<dialog
-  bind:this={dialogRef}
-  class="modal"
-  on:click={closeModalOnBackdropClick}
-  on:close={() => (isModalVisible = false)}
->
+<dialog bind:this={dialogRef} class="modal" on:click={handleOnClick} on:close={handleOnClose}>
   {#if title}
     <h2 class="modal__title">{title}</h2>
   {/if}
