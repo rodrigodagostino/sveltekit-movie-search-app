@@ -15,6 +15,8 @@
 
 <style lang="scss">
   .welcome {
+    text-align: center;
+
     &__arrow {
       width: 6rem;
       margin: 0 auto;

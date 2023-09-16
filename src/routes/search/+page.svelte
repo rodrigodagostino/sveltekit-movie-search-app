@@ -4,7 +4,7 @@
 
   export let data;
 
-  $: results = data.results;
+  $: results = data.results?.sort((a, b) => +b.Year.slice(0, 4) - +a.Year.slice(0, 4));
 </script>
 
 <svelte:head>
@@ -37,12 +37,13 @@
   }
 
   .search__not-found {
+    max-width: 100%;
+    margin: 1rem auto 0;
     font-family: 'Gloria Hallelujah', Arial, Helvetica, sans-serif;
     font-size: 1.75rem;
     line-height: 1.32;
     color: var(--gray-400);
-    margin: 1rem auto 0;
-    max-width: 100%;
+    text-align: center;
     transition:
       font-size 0.32s ease,
       max-width 0.32s ease;
