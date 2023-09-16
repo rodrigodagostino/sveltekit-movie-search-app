@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { OMDB_API_KEY } from '$env/static/private';
+import { OMDB_API_KEY, OMDB_API_URL, YOUTUBE_API_KEY, YOUTUBE_API_URL } from '$env/static/private';
 import { redirect } from '@sveltejs/kit';
 
 export interface OMDbAPIFetchResponseRating {
@@ -35,16 +35,78 @@ export interface OMDbAPIFetchResponse {
   Response: string;
 }
 
+export interface YouTubeAPIFetchResponseItem {
+  kind: string;
+  etag: string;
+  id: {
+    kind: string;
+    videoId: string;
+  };
+  snippet: {
+    publishedAt: string;
+    channelId: string;
+    title: string;
+    description: string;
+    thumbnails: {
+      default: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      medium: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      high: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      standard: {
+        url: string;
+        width: number;
+        height: number;
+      };
+      maxres: {
+        url: string;
+        width: number;
+        height: number;
+      };
+    };
+  };
+}
+
+export interface YouTubeAPIFetchResponse {
+  kind: string;
+  etag: string;
+  nextPageToken: string;
+  regionCode: string;
+  pageInfo: {
+    totalResults: number;
+    resultsPerPage: number;
+  };
+  items: Array<YouTubeAPIFetchResponseItem>;
+}
+
 export const load: PageServerLoad = async ({ fetch, params }) => {
-  const apiUrl = 'https://www.omdbapi.com';
   const id = params.id;
 
   if (!id) throw redirect(301, '/');
 
-  const response = await fetch(`${apiUrl}/?apikey=${OMDB_API_KEY}&i=${id}`);
-  const responseJSON: OMDbAPIFetchResponse = await response.json();
+  const OMDbResponse = await fetch(`${OMDB_API_URL}/?apikey=${OMDB_API_KEY}&i=${id}`);
+  const OMDbResponseJSON: OMDbAPIFetchResponse = await OMDbResponse.json();
+
+  const q = encodeURI(
+    `${OMDbResponseJSON.Title.replace('&', 'and')} ${OMDbResponseJSON.Year} trailer`
+  );
+  const YTResponse = await fetch(
+    `${YOUTUBE_API_URL}/search?part=snippet&maxResults=1&q=${q}&key=${YOUTUBE_API_KEY}`
+  );
+  const YTResponseJSON: YouTubeAPIFetchResponse = await YTResponse.json();
 
   return {
-    title: responseJSON,
+    title: OMDbResponseJSON,
+    trailer: YTResponseJSON.items[0],
   };
 };
