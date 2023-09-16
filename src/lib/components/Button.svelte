@@ -3,9 +3,11 @@
     | 'primary-solid'
     | 'primary-outline'
     | 'primary-text'
+    | 'primary-icon'
     | 'secondary-solid'
     | 'secondary-outline'
-    | 'secondary-text';
+    | 'secondary-text'
+    | 'secondary-icon';
 </script>
 
 <script lang="ts">
@@ -69,7 +71,7 @@
       outline 0.24s;
 
     &:focus-visible {
-      outline: 3px solid var(--white-rich);
+      outline: 3px solid rgba(255, 255, 255, 0.5);
     }
 
     &[disabled] {
@@ -114,7 +116,8 @@
       }
     }
 
-    &--primary-text {
+    &--primary-text,
+    &--primary-icon {
       color: var(--color-main);
       background-color: transparent;
 
@@ -161,7 +164,8 @@
       }
     }
 
-    &--secondary-text {
+    &--secondary-text,
+    &--secondary-icon {
       color: var(--gray-200);
       background-color: transparent;
 
@@ -173,6 +177,12 @@
       &:active {
         background-color: hsla(0, 0%, 100%, 0.06);
       }
+    }
+
+    &--primary-icon,
+    &--secondary-icon {
+      padding-inline: unset;
+      aspect-ratio: 1;
     }
   }
 </style>
