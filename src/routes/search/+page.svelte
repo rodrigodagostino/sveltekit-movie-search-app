@@ -7,6 +7,10 @@
   $: results = data.results;
 </script>
 
+<svelte:head>
+  <title>Search results for “{$page.url.searchParams.get('q')}”</title>
+</svelte:head>
+
 <div class="search">
   {#if results?.length > 0}
     <ul class="search-results">

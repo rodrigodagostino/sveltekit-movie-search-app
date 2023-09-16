@@ -13,6 +13,10 @@
   let isModalVisible = false;
 </script>
 
+<svelte:head>
+  <title>{title.Title} ({title.Year})</title>
+</svelte:head>
+
 <div class="title">
   {#if title}
     <div class="title__overview">
