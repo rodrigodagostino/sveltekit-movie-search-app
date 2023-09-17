@@ -1,6 +1,6 @@
 import type { PageServerLoad } from './$types';
 import { OMDB_API_KEY, OMDB_API_URL, YOUTUBE_API_KEY, YOUTUBE_API_URL } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 export interface OMDbAPIFetchResponseRating {
   Source: string;
@@ -94,19 +94,28 @@ export const load: PageServerLoad = async ({ fetch, params }) => {
 
   if (!id) throw redirect(301, '/');
 
-  const OMDbResponse = await fetch(`${OMDB_API_URL}/?apikey=${OMDB_API_KEY}&i=${id}`);
+  const OMDbSearchParams = new URLSearchParams({
+    apikey: OMDB_API_KEY,
+    i: id,
+  }).toString();
+  const OMDbResponse = await fetch(`${OMDB_API_URL}/?${OMDbSearchParams}`);
+  if (!OMDbResponse.ok) throw error(OMDbResponse.status, OMDbResponse.statusText);
   const OMDbResponseJSON: OMDbAPIFetchResponse = await OMDbResponse.json();
 
   const q = encodeURI(
     `${OMDbResponseJSON.Title.replace('&', 'and')} ${OMDbResponseJSON.Year} trailer`
   );
-  const YTResponse = await fetch(
-    `${YOUTUBE_API_URL}/search?part=snippet&maxResults=1&q=${q}&key=${YOUTUBE_API_KEY}`
-  );
-  const YTResponseJSON: YouTubeAPIFetchResponse = await YTResponse.json();
+  const YTSearchParams = new URLSearchParams({
+    key: YOUTUBE_API_KEY,
+    q,
+    part: 'snippet',
+    maxResults: '1',
+  }).toString();
+  const YTResponse = await fetch(`${YOUTUBE_API_URL}/search?${YTSearchParams}`);
+  const YTResponseJSON: YouTubeAPIFetchResponse = YTResponse.ok ? await YTResponse.json() : null;
 
   return {
     title: OMDbResponseJSON,
-    trailer: YTResponseJSON.items[0],
+    trailer: YTResponseJSON?.items[0],
   };
 };
