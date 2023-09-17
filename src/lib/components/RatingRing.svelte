@@ -5,7 +5,7 @@
 
   $: normalizedRadius = radius - stroke / 2;
   $: circumference = normalizedRadius * 2 * Math.PI;
-  $: strokeDashoffset = circumference - (progress / 10) * circumference;
+  $: strokeDashoffset = progress ? circumference - (progress / 10) * circumference : circumference;
 </script>
 
 <div class="rating-ring">
@@ -30,7 +30,7 @@
       cy={radius}
     />
   </svg>
-  <span class="rating-ring__progress">{progress}</span>
+  <span class="rating-ring__progress">{progress || 'N/A'}</span>
 </div>
 
 <style lang="scss">
@@ -38,7 +38,7 @@
     position: relative;
 
     svg {
-      vertical-align: middle; /* Removes blank space below. */
+      vertical-align: middle; // Removes blank space below.
     }
 
     circle {
