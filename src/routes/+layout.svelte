@@ -64,6 +64,7 @@
 
   .app-main {
     margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .app-footer {
