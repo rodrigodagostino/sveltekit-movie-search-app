@@ -22,9 +22,11 @@
     <div class="title__overview">
       <picture class="title__poster">
         {#if title.Poster !== 'N/A'}
-          <img src={title.Poster} width="300" height="450" class="title__poster-image" alt="" />
+          <img src={title.Poster} width="300" height="450" class="title__poster__image" alt="" />
         {:else}
-          <IconPhoto size={64} stroke={4} />
+          <div class="title__poster__image-placeholder">
+            <IconPhoto size={164} />
+          </div>
         {/if}
       </picture>
       <div class="title__content">
@@ -61,7 +63,7 @@
     </div>
   {/if}
 
-  {#if isModalVisible}
+  {#if trailer && isModalVisible}
     <Modal bind:isModalVisible title={`${title.Title} (${title.Year})`}>
       <iframe
         class="title__trailer"
@@ -98,11 +100,19 @@
       overflow: hidden;
       background-color: var(--gray-850);
       transition: width 0.32s ease;
-    }
 
-    &__poster-image {
-      height: 150%;
-      object-fit: cover;
+      &__image {
+        height: auto;
+      }
+
+      &__image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 2 / 3;
+        background-color: var(--gray-950);
+        color: var(--gray-200);
+      }
     }
 
     &__content {

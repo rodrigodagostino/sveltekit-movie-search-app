@@ -15,13 +15,15 @@
       {#if result.Poster !== 'N/A'}
         <img
           src={result.Poster}
-          class="search-result__poster-image"
+          class="search-result__poster__image"
           alt={result.Title}
           width="300"
           height="450"
         />
       {:else}
-        <IconPhoto size={64} stroke={4} />
+        <div class="search-result__poster__image-placeholder">
+          <IconPhoto size={100} />
+        </div>
       {/if}
     </picture>
     <div class="search-result__info">
@@ -69,9 +71,13 @@
         box-shadow: 0 0.5rem 2rem hsla(240, 11%, 4%, 0.8);
         transform: translate3d(0, -1rem, 0);
 
-        .search-result__poster-image {
-          transform: scale(1.1) rotate(4deg);
-          transition: transform 0.32s ease;
+        .search-result__poster__image,
+        .search-result__poster__image-placeholder {
+          scale: 1.1;
+          rotate: 4deg;
+          transition:
+            scale 0.32s,
+            rotate 0.32s;
         }
       }
 
@@ -93,14 +99,27 @@
       margin: -50% auto 0;
       border-radius: 0.75rem;
       overflow: hidden;
-      position: relative;
-      transition: padding 0.32s ease;
+      transition: padding 0.32s;
 
-      &-image {
-        height: 150%;
+      &__image,
+      &__image-placeholder {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 2 / 3;
         object-fit: cover;
-        transform: scale(1) rotate(0deg);
-        transition: transform 0.32s ease;
+        scale: 1;
+        rotate: 0deg;
+        transition:
+          scale 0.32s,
+          rotate 0.32s;
+      }
+
+      &__image-placeholder {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--gray-950);
+        color: var(--gray-200);
       }
     }
 
