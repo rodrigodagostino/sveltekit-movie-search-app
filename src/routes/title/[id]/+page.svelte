@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { IconPhoto, IconPlayerPlayFilled, IconShare3 } from '@tabler/icons-svelte';
 
   import Button from '$components/Button.svelte';
@@ -7,20 +8,37 @@
 
   export let data;
 
-  $: title = data.title;
-  $: trailer = data.trailer;
+  $: ({ title, trailer } = data);
 
   let isModalVisible = false;
+
+  let titleRef: HTMLDivElement;
+
+  onMount(() => {
+    if (titleRef) {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        ::view-transition-old(poster-${title.imdbID}),
+        ::view-transition-new(poster-${title.imdbID}) {
+          /* Make the width and height the same as the group,
+          meaning the view size might not match its aspect-ratio. */
+          width: 100%;
+          height: 100%;
+        }`;
+
+      titleRef.appendChild(style);
+    }
+  });
 </script>
 
 <svelte:head>
   <title>{title.Title} ({title.Year})</title>
 </svelte:head>
 
-<div class="title">
+<div bind:this={titleRef} class="title">
   {#if title}
     <div class="title__overview">
-      <picture class="title__poster">
+      <picture class="title__poster" style:--poster="poster-{title.imdbID}">
         {#if title.Poster !== 'N/A'}
           <img src={title.Poster} width="300" height="450" class="title__poster__image" alt="" />
         {:else}
@@ -60,6 +78,7 @@
           </Button>
         </footer>
       </div>
+      <div class="title__background" />
     </div>
   {/if}
 
@@ -84,11 +103,10 @@
     &__overview {
       display: flex;
       flex-direction: column;
-      background: linear-gradient(160deg, var(--gray-850) 0%, var(--gray-950) 100%);
       margin: 50% auto 0;
       max-width: 100%;
-      border-radius: 0.75rem;
-      transition: max-width 0.32s ease;
+      transition: max-width 0.32s;
+      position: relative;
     }
 
     &__poster {
@@ -99,7 +117,8 @@
       border-radius: 0.75rem;
       overflow: hidden;
       background-color: var(--gray-850);
-      transition: width 0.32s ease;
+      transition: width 0.32s;
+      view-transition-name: var(--poster);
 
       &__image {
         height: auto;
@@ -119,8 +138,7 @@
       flex: 1;
       color: var(--gray-300);
       padding: 1.5rem;
-      border-radius: 0 0 0.75rem 0.75rem;
-      transition: padding 0.32s ease;
+      transition: padding 0.32s;
     }
 
     &__title {
@@ -181,6 +199,14 @@
       justify-content: space-between;
       padding-top: 2rem;
       margin-top: auto;
+    }
+
+    &__background {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(160deg, var(--gray-850) 0%, var(--gray-950) 100%);
+      border-radius: 0.75rem;
+      z-index: -1;
     }
 
     &__trailer {

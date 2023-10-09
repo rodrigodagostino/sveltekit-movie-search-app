@@ -1,17 +1,36 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { IconPhoto } from '@tabler/icons-svelte';
 
   import type { OMDbAPISearchResponseSearch } from '../../routes/search/+page.server';
 
   export let result: OMDbAPISearchResponseSearch;
+
+  let searchResultRef: HTMLLIElement;
+
+  onMount(() => {
+    if (searchResultRef) {
+      const style = document.createElement('style');
+      style.innerHTML = `
+        ::view-transition-old(poster-${result.imdbID}),
+        ::view-transition-new(poster-${result.imdbID}) {
+          /* Make the width and height the same as the group,
+          meaning the view size might not match its aspect-ratio. */
+          width: 100%;
+          height: 100%;
+        }`;
+
+      searchResultRef.appendChild(style);
+    }
+  });
 </script>
 
-<li class="search-result">
+<li bind:this={searchResultRef} class="search-result">
   <a href="/title/{result.imdbID}" class="search-result__link">
     <span class="search-result__link-text">
       See detailed information for “{result.Title}”
     </span>
-    <picture class="search-result__poster">
+    <picture class="search-result__poster" style:--poster="poster-{result.imdbID}">
       {#if result.Poster !== 'N/A'}
         <img
           src={result.Poster}
@@ -30,6 +49,7 @@
       <h3 class="search-result__title">{result.Title}</h3>
       <p class="search-result__year">{result.Year}</p>
     </div>
+    <div class="search-result__background" />
   </a>
 </li>
 
@@ -40,35 +60,15 @@
     margin-top: 50%;
 
     &__link {
-      background-color: var(--gray-850);
-      border-radius: 0.75rem;
       position: relative;
       display: flex;
       flex-direction: column;
-      transition:
-        background-color 0.32s ease,
-        outline 0.32s ease,
-        transform 0.32s ease,
-        box-shadow 0.32s ease;
-      will-change: transform;
       text-decoration: none;
-      outline: 2px solid transparent;
-
-      &::before {
-        content: '';
-        background: linear-gradient(160deg, transparent 0%, var(--gray-950) 100%);
-        border-radius: 0.75rem;
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-      }
+      transition: transform 0.32s;
+      will-change: transform;
 
       &:focus,
       &:hover {
-        background: var(--gray-750);
-        box-shadow: 0 0.5rem 2rem hsla(240, 11%, 4%, 0.8);
         transform: translate3d(0, -1rem, 0);
 
         .search-result__poster__image,
@@ -79,12 +79,21 @@
             scale 0.32s,
             rotate 0.32s;
         }
+
+        .search-result__background {
+          background-color: var(--gray-650);
+          box-shadow: 0 0.5rem 2rem hsla(240, 11%, 4%, 0.8);
+        }
       }
 
-      &:focus {
-        box-shadow:
-          0 0 0 0.125rem var(--color-main),
-          0 0.5rem 2rem hsla(240, 11%, 4%, 0.8);
+      &:focus-visible {
+        outline: none;
+
+        .search-result__background {
+          box-shadow:
+            0 0 0 0.1875rem var(--color-main),
+            0 0.5rem 2rem hsla(240, 11%, 4%, 0.8);
+        }
       }
     }
 
@@ -100,6 +109,7 @@
       border-radius: 0.75rem;
       overflow: hidden;
       transition: padding 0.32s;
+      view-transition-name: var(--poster);
 
       &__image,
       &__image-placeholder {
@@ -128,7 +138,6 @@
       text-align: center;
       position: relative;
       z-index: 1;
-      transition: background-color 0.32s ease;
     }
 
     &__title {
@@ -141,6 +150,18 @@
       font-size: 0.875rem;
       color: var(--gray-300);
       margin-top: 0.25rem;
+    }
+
+    &__background {
+      position: absolute;
+      inset: 0;
+      border-radius: 0.75rem;
+      background-color: var(--gray-850);
+      background-image: linear-gradient(160deg, transparent 0%, var(--gray-950) 100%);
+      transition:
+        background-color 0.32s,
+        box-shadow 0.32s;
+      z-index: -1;
     }
   }
 

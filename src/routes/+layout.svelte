@@ -1,8 +1,22 @@
 <script>
+  import { onNavigate } from '$app/navigation';
   import SearchForm from '$components/SearchForm.svelte';
   import svelteLogo from '$assets/images/svelte-logo.svg';
   import appLogo from '$assets/images/app-logo.svg';
   import './styles.css';
+
+  onNavigate((navigation) => {
+    // @ts-expect-error
+    if (!document.startViewTransition) return;
+
+    return new Promise((resolve) => {
+      // @ts-expect-error
+      document.startViewTransition(async () => {
+        resolve();
+        await navigation.complete;
+      });
+    });
+  });
 </script>
 
 <header class="app-header">
@@ -63,8 +77,7 @@
   }
 
   .app-main {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+    view-transition-name: app-main;
   }
 
   .app-footer {

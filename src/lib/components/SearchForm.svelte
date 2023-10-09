@@ -30,7 +30,8 @@
     width: 100%;
     max-width: 36rem;
     margin: 0 auto;
-    transition: margin 0.4s ease;
+    transition: margin 0.8s;
+    view-transition-name: search-form;
   }
 
   .search-box {

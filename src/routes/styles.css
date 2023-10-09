@@ -191,6 +191,7 @@ h6 {
 .app {
   display: flex;
   flex-direction: column;
+  gap: 2rem;
   min-height: 100vh;
 }
 
@@ -218,4 +219,12 @@ h6 {
   overflow: visible !important;
   width: auto !important;
   white-space: normal !important;
+}
+
+@media (prefers-reduced-motion) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
